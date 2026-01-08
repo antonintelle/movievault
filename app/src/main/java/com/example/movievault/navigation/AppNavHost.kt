@@ -10,8 +10,8 @@ import com.example.movievault.ui.auth.LoginScreen
 import com.example.movievault.ui.auth.RegisterScreen
 import com.example.movievault.ui.main.MainScreen
 import com.example.movievault.ui.profile.ProfileScreen
+import com.example.movievault.ui.search.SearchScreen
 import com.google.firebase.auth.FirebaseAuth
-
 
 @Composable
 fun AppNavHost() {
@@ -25,7 +25,7 @@ fun AppNavHost() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Login.route
+        startDestination = start
     ) {
 
         composable(Routes.Login.route) {
@@ -54,7 +54,8 @@ fun AppNavHost() {
             MainScreen(
                 onAddMovie = { navController.navigate(Routes.AddMovie.route) },
                 onAbout = { navController.navigate(Routes.About.route) },
-                onProfile = { navController.navigate(Routes.Profile.route) }
+                onProfile = { navController.navigate(Routes.Profile.route) },
+                onSearch = { navController.navigate(Routes.Search.route) }
             )
         }
 
@@ -66,7 +67,7 @@ fun AppNavHost() {
             ProfileScreen(
                 onBack = { navController.popBackStack() },
                 onLogout = {
-                    com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+                    FirebaseAuth.getInstance().signOut()
                     navController.navigate(Routes.Login.route) {
                         popUpTo(Routes.Main.route) { inclusive = true }
                     }
@@ -77,5 +78,10 @@ fun AppNavHost() {
         composable(Routes.About.route) {
             AboutScreen(onBack = { navController.popBackStack() })
         }
+
+        composable(Routes.Search.route) {
+            SearchScreen(onBack = { navController.popBackStack() })
+        }
     }
 }
+

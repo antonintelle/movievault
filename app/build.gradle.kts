@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
 
+
 }
 
 android {
@@ -64,6 +65,10 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.firestore)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+
+
 
 
 }
