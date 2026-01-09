@@ -12,7 +12,9 @@ import coil.compose.AsyncImage
 import com.example.movievault.util.gravatarUrl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FirebaseFirestore
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +75,17 @@ fun ProfileScreen(
             )
 
             Spacer(Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = {
+                    FirebaseCrashlytics.getInstance().log("Test crash button clicked")
+                    throw RuntimeException("Test Crash MovieVault")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(" Test Crash ")
+            }
+
 
             OutlinedButton(
                 onClick = {

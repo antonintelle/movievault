@@ -11,6 +11,11 @@ import com.example.movievault.data.model.Movie
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.platform.LocalConfiguration
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +66,9 @@ fun MainScreen(
         }
     }
 
+    val config = LocalConfiguration.current
+    val isTablet = config.screenWidthDp >= 600
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -100,53 +108,56 @@ fun MainScreen(
                 Spacer(Modifier.height(8.dp))
                 Text("Appuie sur + pour en ajouter.")
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(movies) { movie ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(Modifier.padding(12.dp)) {
-                                Text(movie.title, style = MaterialTheme.typography.titleMedium)
-                                Spacer(Modifier.height(4.dp))
-                                Text("Status: ${movie.status}")
-
-                                if (movie.rating != null) {
-                                    Text("Note: ${movie.rating}/10")
+                if (!isTablet) {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(movies) { movie ->
+                            MovieCard(
+                                movie = movie,
+                                onEdit = {
+                                    editingMovie = movie
+                                    editStatus = movie.status
+                                    editRatingText = movie.rating?.toString() ?: ""
+                                    editReview = movie.review ?: ""
+                                },
+                                onDelete = {
+                                    val user = auth.currentUser ?: return@MovieCard
+                                    db.collection("users")
+                                        .document(user.uid)
+                                        .collection("movies")
+                                        .document(movie.id)
+                                        .delete()
                                 }
-                                if (!movie.review.isNullOrBlank()) {
-                                    Text("Commentaire: ${movie.review}")
+                            )
+                        }
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(movies) { movie ->
+                            MovieCard(
+                                movie = movie,
+                                onEdit = {
+                                    editingMovie = movie
+                                    editStatus = movie.status
+                                    editRatingText = movie.rating?.toString() ?: ""
+                                    editReview = movie.review ?: ""
+                                },
+                                onDelete = {
+                                    val user = auth.currentUser ?: return@MovieCard
+                                    db.collection("users")
+                                        .document(user.uid)
+                                        .collection("movies")
+                                        .document(movie.id)
+                                        .delete()
                                 }
-
-                                Spacer(Modifier.height(8.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    TextButton(
-                                        onClick = {
-                                            editingMovie = movie
-                                            editStatus = movie.status
-                                            editRatingText = movie.rating?.toString() ?: ""
-                                            editReview = movie.review ?: ""
-                                        }
-                                    ) { Text("Edit") }
-
-                                    TextButton(
-                                        onClick = {
-                                            val user = auth.currentUser ?: return@TextButton
-                                            db.collection("users")
-                                                .document(user.uid)
-                                                .collection("movies")
-                                                .document(movie.id)
-                                                .delete()
-                                        }
-                                    ) { Text("Delete") }
-                                }
-                            }
+                            )
                         }
                     }
                 }
@@ -222,3 +233,31 @@ fun MainScreen(
         }
     }
 }
+@Composable
+private fun MovieCard(
+    movie: Movie,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(12.dp)) {
+            Text(movie.title, style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(4.dp))
+            Text("Status: ${movie.status}")
+
+            if (movie.rating != null) Text("Note: ${movie.rating}/10")
+            if (!movie.review.isNullOrBlank()) Text("Commentaire: ${movie.review}")
+
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onEdit) { Text("Edit") }
+                TextButton(onClick = onDelete) { Text("Delete") }
+            }
+        }
+    }
+}
+
