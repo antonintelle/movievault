@@ -11,11 +11,3 @@ data class OmdbSearchResponse(
     @SerialName("Error") val error: String? = null
 )
 
-@Serializable
-data class OmdbMovieShort(
-    @SerialName("Title") val title: String = "",
-    @SerialName("Year") val year: String? = null,
-    @SerialName("imdbID") val imdbId: String = "",
-    @SerialName("Type") val type: String? = null,
-    @SerialName("Poster") val poster: String? = null
-)

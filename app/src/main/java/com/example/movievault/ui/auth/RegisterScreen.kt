@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun RegisterScreen(
@@ -21,6 +23,7 @@ fun RegisterScreen(
 
     var loading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var name by remember { mutableStateOf("") }
 
     fun register() {
         errorMessage = null
@@ -43,10 +46,43 @@ fun RegisterScreen(
             .addOnCompleteListener { task ->
                 loading = false
                 if (task.isSuccessful) {
-                    onRegisterSuccess()
+                    val user = auth.currentUser
+
+                    if (user != null) {
+                        // 1. Update displayName (Auth)
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(name.trim())
+                            .build()
+
+                        user.updateProfile(profileUpdates)
+
+                        // 2. Create Firestore user document
+                        val db = FirebaseFirestore.getInstance()
+                        val uid = user.uid
+
+                        val data = hashMapOf(
+                            "uid" to uid,
+                            "email" to (user.email ?: ""),
+                            "displayName" to name.trim(),
+                            "photoUrl" to "",
+                            "createdAt" to System.currentTimeMillis(),
+                            "updatedAt" to System.currentTimeMillis()
+                        )
+
+                        db.collection("users")
+                            .document(uid)
+                            .set(data)
+                            .addOnSuccessListener {
+                                onRegisterSuccess()
+                            }
+                            .addOnFailureListener { e ->
+                                errorMessage = e.localizedMessage ?: "Erreur Firestore"
+                            }
+                    }
                 } else {
                     errorMessage = task.exception?.localizedMessage ?: "Erreur d'inscription"
                 }
+
             }
     }
 
@@ -58,6 +94,16 @@ fun RegisterScreen(
         ) {
             Text("Register", style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nom") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(Modifier.height(12.dp))
+
 
             OutlinedTextField(
                 value = email,

@@ -36,15 +36,16 @@ fun SearchScreen(onBack: () -> Unit) {
             error = "Tape un titre."
             return
         }
+
         loading = true
         scope.launch {
             try {
-                val resp = omdb.searchMovies(query.trim())
-                if (resp.response == "True") {
-                    results = resp.search
-                } else {
+                val movies = omdb.searchMovies(query.trim())
+                if (movies.isEmpty()) {
                     results = emptyList()
-                    error = resp.error ?: "Aucun résultat"
+                    error = "Aucun résultat"
+                } else {
+                    results = movies
                 }
             } catch (e: Exception) {
                 error = e.localizedMessage ?: "Erreur réseau"
@@ -53,6 +54,7 @@ fun SearchScreen(onBack: () -> Unit) {
             }
         }
     }
+
 
     fun addToFirestore(item: OmdbMovieShort) {
         val user = auth.currentUser ?: run {
