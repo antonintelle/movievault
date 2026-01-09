@@ -29,15 +29,15 @@ fun RegisterScreen(
         errorMessage = null
 
         if (email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
-            errorMessage = "Remplis tous les champs."
+            errorMessage = "Fill all fields."
             return
         }
         if (password != confirmPassword) {
-            errorMessage = "Les mots de passe ne correspondent pas."
+            errorMessage = "Passwords don't match."
             return
         }
         if (password.length < 6) {
-            errorMessage = "Mot de passe trop court (min 6 caractères)."
+            errorMessage = "Password too short (min 6 characters)."
             return
         }
 
@@ -76,11 +76,11 @@ fun RegisterScreen(
                                 onRegisterSuccess()
                             }
                             .addOnFailureListener { e ->
-                                errorMessage = e.localizedMessage ?: "Erreur Firestore"
+                                errorMessage = e.localizedMessage ?: "Firestore Error"
                             }
                     }
                 } else {
-                    errorMessage = task.exception?.localizedMessage ?: "Erreur d'inscription"
+                    errorMessage = task.exception?.localizedMessage ?: "Register Error"
                 }
 
             }
@@ -98,7 +98,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nom") },
+                label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -117,7 +117,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Mot de passe") },
+                label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation()
@@ -127,7 +127,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirmer le mot de passe") },
+                label = { Text("Confirm password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation()
@@ -154,9 +154,9 @@ fun RegisterScreen(
                         strokeWidth = 2.dp
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("Création...")
+                    Text("Creation...")
                 } else {
-                    Text("Créer un compte")
+                    Text("Create account")
                 }
             }
 

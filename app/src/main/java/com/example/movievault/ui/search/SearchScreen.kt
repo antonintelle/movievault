@@ -38,7 +38,7 @@ fun SearchScreen(onBack: () -> Unit) {
         error = null
 
         if (query.isBlank()) {
-            error = "Tape un titre."
+            error = "Write a title"
             return
         }
 
@@ -55,14 +55,14 @@ fun SearchScreen(onBack: () -> Unit) {
 
                 if (movies.isEmpty()) {
                     results = emptyList()
-                    error = "Aucun résultat"
+                    error = "No results"
                     analytics.logEvent("omdb_search_empty", null)
                 } else {
                     results = movies
                 }
 
             } catch (e: Exception) {
-                error = e.localizedMessage ?: "Erreur réseau"
+                error = e.localizedMessage ?: "Connection Error"
                 analytics.logEvent("omdb_search_error", null)
             } finally {
                 loading = false
@@ -72,7 +72,7 @@ fun SearchScreen(onBack: () -> Unit) {
 
     fun addToFirestore(item: OmdbMovieShort) {
         val user = auth.currentUser ?: run {
-            error = "Utilisateur non connecté."
+            error = "User not logged in."
             return
         }
 
@@ -95,11 +95,11 @@ fun SearchScreen(onBack: () -> Unit) {
             .collection("movies")
             .add(movie)
             .addOnSuccessListener {
-                error = "Ajouté à ta watchlist"
+                error = "Added to watchlist"
                 analytics.logEvent("movie_add_success", null)
             }
             .addOnFailureListener { e ->
-                error = e.localizedMessage ?: "Erreur ajout Firestore"
+                error = e.localizedMessage ?: "Firestore Error"
                 analytics.logEvent("movie_add_failed", null)
             }
     }
@@ -125,7 +125,7 @@ fun SearchScreen(onBack: () -> Unit) {
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                label = { Text("Rechercher un film") },
+                label = { Text("Search a movie") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )

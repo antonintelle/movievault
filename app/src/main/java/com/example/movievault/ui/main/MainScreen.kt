@@ -41,7 +41,7 @@ fun MainScreen(
         val user = auth.currentUser
         if (user == null) {
             loading = false
-            errorMessage = "Utilisateur non connecté."
+            errorMessage = "User not logged in"
             onDispose { }
         } else {
             val reg: ListenerRegistration = db.collection("users")
@@ -50,7 +50,7 @@ fun MainScreen(
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         loading = false
-                        errorMessage = error.localizedMessage ?: "Erreur Firestore"
+                        errorMessage = error.localizedMessage ?: "Firestore Error"
                         return@addSnapshotListener
                     }
 
@@ -94,7 +94,7 @@ fun MainScreen(
             if (loading) {
                 CircularProgressIndicator()
                 Spacer(Modifier.height(12.dp))
-                Text("Chargement...")
+                Text("Loading...")
                 return@Column
             }
 
@@ -104,9 +104,9 @@ fun MainScreen(
             }
 
             if (movies.isEmpty()) {
-                Text("Aucun film pour le moment.")
+                Text("No movie at the moment.")
                 Spacer(Modifier.height(8.dp))
-                Text("Appuie sur + pour en ajouter.")
+                Text("Clic + to add one.")
             } else {
                 if (!isTablet) {
                     LazyColumn(
@@ -186,14 +186,14 @@ fun MainScreen(
                         OutlinedTextField(
                             value = editRatingText,
                             onValueChange = { editRatingText = it },
-                            label = { Text("Note (1-10) optionnel") },
+                            label = { Text("Rating (1-10) optional") },
                             singleLine = true
                         )
 
                         OutlinedTextField(
                             value = editReview,
                             onValueChange = { editReview = it },
-                            label = { Text("Commentaire (optionnel)") },
+                            label = { Text("Comment (optional)") },
                             minLines = 2
                         )
                     }
@@ -245,8 +245,8 @@ private fun MovieCard(
             Spacer(Modifier.height(4.dp))
             Text("Status: ${movie.status}")
 
-            if (movie.rating != null) Text("Note: ${movie.rating}/10")
-            if (!movie.review.isNullOrBlank()) Text("Commentaire: ${movie.review}")
+            if (movie.rating != null) Text("Rating: ${movie.rating}/10")
+            if (!movie.review.isNullOrBlank()) Text("Comment: ${movie.review}")
 
             Spacer(Modifier.height(8.dp))
 

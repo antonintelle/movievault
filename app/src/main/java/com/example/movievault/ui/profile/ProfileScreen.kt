@@ -54,7 +54,7 @@ fun ProfileScreen(
 
             AsyncImage(
                 model = avatarUrl,
-                contentDescription = "Photo de profil",
+                contentDescription = "Profil picture",
                 modifier = Modifier.size(96.dp).clip(CircleShape)
             )
 
@@ -69,7 +69,7 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = displayName,
                 onValueChange = { displayName = it },
-                label = { Text("Nom") },
+                label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -92,11 +92,11 @@ fun ProfileScreen(
                     msg = null
                     val u = FirebaseAuth.getInstance().currentUser
                     if (u == null) {
-                        msg = "Utilisateur non connecté."
+                        msg = "User not logged in."
                         return@OutlinedButton
                     }
                     if (displayName.trim().isBlank()) {
-                        msg = "Nom vide."
+                        msg = "Empty name."
                         return@OutlinedButton
                     }
 
@@ -122,22 +122,22 @@ fun ProfileScreen(
 
                                 .addOnSuccessListener {
                                     savingName = false
-                                    msg = "✅ Nom mis à jour."
+                                    msg = "✅ Name updated."
                                 }
                                 .addOnFailureListener { e ->
                                     savingName = false
-                                    msg = e.localizedMessage ?: "Erreur Firestore"
+                                    msg = e.localizedMessage ?: "Firestore Error"
                                 }
                         }
                         .addOnFailureListener { e ->
                             savingName = false
-                            msg = e.localizedMessage ?: "Erreur update profile"
+                            msg = e.localizedMessage ?: "Update profile Error"
                         }
                 },
                 enabled = !savingName,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (savingName) "..." else "Enregistrer le nom")
+                Text(if (savingName) "..." else "Register name")
             }
 
             Spacer(Modifier.height(12.dp))
@@ -147,7 +147,7 @@ fun ProfileScreen(
                 onClick = { showPasswordDialog = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Changer le mot de passe")
+                Text("Change password")
             }
 
             if (msg != null) {
@@ -161,7 +161,7 @@ fun ProfileScreen(
                 onClick = onLogout,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Se déconnecter")
+                Text("Log Out")
             }
         }
     }
@@ -173,19 +173,19 @@ fun ProfileScreen(
                 newPassword = ""
                 confirmPassword = ""
             },
-            title = { Text("Nouveau mot de passe") },
+            title = { Text("New password") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
                         value = newPassword,
                         onValueChange = { newPassword = it },
-                        label = { Text("Nouveau mot de passe") },
+                        label = { Text("New password") },
                         singleLine = true
                     )
                     OutlinedTextField(
                         value = confirmPassword,
                         onValueChange = { confirmPassword = it },
-                        label = { Text("Confirmer") },
+                        label = { Text("Confirm") },
                         singleLine = true
                     )
                 }
@@ -197,17 +197,17 @@ fun ProfileScreen(
                         msg = null
 
                         if (newPassword.length < 6) {
-                            msg = "Mot de passe trop court (min 6 caractères)."
+                            msg = "Password too short (min 6 characters)."
                             return@TextButton
                         }
                         if (newPassword != confirmPassword) {
-                            msg = "Les mots de passe ne correspondent pas."
+                            msg = "Passwords don't match."
                             return@TextButton
                         }
 
                         val u = FirebaseAuth.getInstance().currentUser
                         if (u == null) {
-                            msg = "Utilisateur non connecté."
+                            msg = "User not logged in."
                             return@TextButton
                         }
 
@@ -215,14 +215,14 @@ fun ProfileScreen(
                         u.updatePassword(newPassword)
                             .addOnSuccessListener {
                                 loading = false
-                                msg = "✅ Mot de passe mis à jour."
+                                msg = "✅ Password updated."
                                 showPasswordDialog = false
                                 newPassword = ""
                                 confirmPassword = ""
                             }
                             .addOnFailureListener { e ->
                                 loading = false
-                                msg = e.localizedMessage ?: "Erreur changement mot de passe"
+                                msg = e.localizedMessage ?: "Password change Error"
                             }
                     }
                 ) { Text(if (loading) "..." else "Save") }

@@ -29,7 +29,7 @@ fun LoginScreen(
         errorMessage = null
 
         if (email.isBlank() || password.isBlank()) {
-            errorMessage = "Remplis email et mot de passe."
+            errorMessage = "Fill mail and password."
             return
         }
 
@@ -47,7 +47,7 @@ fun LoginScreen(
 
                     analytics.logEvent("login_failed", null)
 
-                    errorMessage = task.exception?.localizedMessage ?: "Erreur de connexion"
+                    errorMessage = task.exception?.localizedMessage ?: "Connexion Error"
                 }
             }
 
@@ -74,7 +74,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Mot de passe") },
+                label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation()
@@ -103,12 +103,12 @@ fun LoginScreen(
                     Spacer(Modifier.width(8.dp))
                     Text("Connexion...")
                 } else {
-                    Text("Se connecter")
+                    Text("Log out")
                 }
             }
 
             TextButton(onClick = onGoRegister) {
-                Text("Créer un compte")
+                Text("Create account")
             }
         }
     }

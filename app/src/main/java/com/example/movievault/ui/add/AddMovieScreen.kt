@@ -32,17 +32,17 @@ fun AddMovieScreen(
         errorMessage = null
         val user = auth.currentUser
         if (user == null) {
-            errorMessage = "Utilisateur non connecté."
+            errorMessage = "User not logged in."
             return
         }
         if (title.isBlank()) {
-            errorMessage = "Le titre est obligatoire."
+            errorMessage = "Title is mandatory."
             return
         }
 
         val rating = ratingText.trim().toIntOrNull()
         if (rating != null && (rating < 1 || rating > 10)) {
-            errorMessage = "La note doit être entre 1 et 10."
+            errorMessage = "Rating between 1 and 10."
             return
         }
 
@@ -67,7 +67,7 @@ fun AddMovieScreen(
             }
             .addOnFailureListener { e ->
                 loading = false
-                errorMessage = e.localizedMessage ?: "Erreur lors de l'ajout"
+                errorMessage = e.localizedMessage ?: "Error while adding"
             }
     }
 
@@ -89,7 +89,7 @@ fun AddMovieScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Titre") },
+                label = { Text("Title") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -115,7 +115,7 @@ fun AddMovieScreen(
             OutlinedTextField(
                 value = ratingText,
                 onValueChange = { ratingText = it },
-                label = { Text("Note (1-10) optionnel") },
+                label = { Text("Rating (1-10) optional") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -126,7 +126,7 @@ fun AddMovieScreen(
             OutlinedTextField(
                 value = review,
                 onValueChange = { review = it },
-                label = { Text("Commentaire (optionnel)") },
+                label = { Text("Comment (optional)") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )
