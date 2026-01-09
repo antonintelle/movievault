@@ -7,6 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
+
 
 @Composable
 fun LoginScreen(
@@ -14,6 +17,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
     val auth = remember { FirebaseAuth.getInstance() }
+    val analytics = remember { Firebase.analytics }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -31,14 +35,22 @@ fun LoginScreen(
 
         loading = true
         auth.signInWithEmailAndPassword(email.trim(), password)
+        auth.signInWithEmailAndPassword(email.trim(), password)
             .addOnCompleteListener { task ->
                 loading = false
                 if (task.isSuccessful) {
+
+                    analytics.logEvent("login_success", null)
+
                     onLoginSuccess()
                 } else {
+
+                    analytics.logEvent("login_failed", null)
+
                     errorMessage = task.exception?.localizedMessage ?: "Erreur de connexion"
                 }
             }
+
     }
 
     Scaffold { padding ->
