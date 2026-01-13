@@ -103,7 +103,7 @@ fun LoginScreen(
                     Spacer(Modifier.width(8.dp))
                     Text("Connexion...")
                 } else {
-                    Text("Log out")
+                    Text("Log in")
                 }
             }
 
