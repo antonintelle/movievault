@@ -30,7 +30,7 @@ fun AboutScreen(
             Spacer(Modifier.height(8.dp))
             Text("A personal movie watchlist app.", style = MaterialTheme.typography.bodyLarge)
             Spacer(Modifier.height(8.dp))
-            Text("Tech: Firebase Auth / Firestore / Ktor (later)")
+            Text("Tech: Firebase Auth / Firestore / Ktors")
         }
     }
 }
